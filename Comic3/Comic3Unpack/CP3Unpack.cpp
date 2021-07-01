@@ -90,7 +90,11 @@ void Decrypt_CP3File_1(CP3Header cp3Header, CP3LIUnpackData liData, WCHAR* saveP
 	while (readSize < liData.header.FileSize)
 	{
 		int curBytes = min(0x800, liData.header.FileSize - readSize);
-		fread(data, 1, curBytes, file);
+		int byte = fread(data, 1, curBytes, file);
+		if (byte != curBytes)
+		{
+			throw "Not a valid CP3 File";
+		}
 		if ((liData.header.Flag & 0x80000) != 0)
 		{
 			xor_decrypt_data(data, curBytes, cp3Header.key, &keyIndex);

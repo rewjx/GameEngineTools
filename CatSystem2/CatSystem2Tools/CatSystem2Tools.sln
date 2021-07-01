@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtxImage", "AtxImage\AtxImage.csproj", "{D89AC62A-EEEF-42A6-9359-1C1323D75940}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CstxPack", "CstxPack\CstxPack.csproj", "{09B3A16D-CB16-4BFF-830D-57C45889A886}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D89AC62A-EEEF-42A6-9359-1C1323D75940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D89AC62A-EEEF-42A6-9359-1C1323D75940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D89AC62A-EEEF-42A6-9359-1C1323D75940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D89AC62A-EEEF-42A6-9359-1C1323D75940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09B3A16D-CB16-4BFF-830D-57C45889A886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09B3A16D-CB16-4BFF-830D-57C45889A886}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09B3A16D-CB16-4BFF-830D-57C45889A886}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09B3A16D-CB16-4BFF-830D-57C45889A886}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB5C493F-5C7C-4004-89D2-3190014F657A}
+	EndGlobalSection
+EndGlobal

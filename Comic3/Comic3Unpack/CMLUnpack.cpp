@@ -64,7 +64,11 @@ void Decrypt_CMLFile_1(CMLHeader header, CMLLIHeader fileHeader, WCHAR* savePath
 	while (readSize < fileHeader.FileSize)
 	{
 		int curBytes = min(0x800, fileHeader.FileSize - readSize);
-		fread(data, 1, curBytes, file);
+		int byte = fread(data, 1, curBytes, file);
+		if (byte != curBytes)
+		{
+			throw "Not a valid CML File";
+		}
 		fwrite(data, 1, curBytes, writeFile);
 		readSize += curBytes;
 	}
