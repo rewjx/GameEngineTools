@@ -14,9 +14,9 @@ namespace AtxImage
 
         static void PrintJsonTest()
         {
-            string dirpath = @"E:\game\gal_adv\悠久のカンパネラ\悠久のカンパネラ体験版\CatSystem\data_02\image\ev\a";
-            string path = @"E:\game\gal_adv\悠久のカンパネラ\悠久のカンパネラ体験版\CatSystem\data_02\image\ev\a\ea011.atx";
-            string savepath = @"E:\game\gal_adv\悠久のカンパネラ\unpack";
+            string dirpath = @"";
+            string path = @"";
+            string savepath = @"";
             //DirectoryInfo dir = new DirectoryInfo(path);
             //foreach (FileInfo item in dir.GetFiles("*.atx"))
             //{
