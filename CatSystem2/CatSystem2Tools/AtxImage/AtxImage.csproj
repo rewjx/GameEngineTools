@@ -44,9 +44,6 @@
     <Reference Include="Nancy.Serialization.ProtoBuf, Version=1.4.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Nancy.Serialization.ProtoBuf.1.4.1\lib\net40\Nancy.Serialization.ProtoBuf.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="protobuf-net, Version=2.0.0.614, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
       <HintPath>..\packages\protobuf-net.2.0.0.614\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
@@ -61,21 +58,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtxFileInfo.cs" />
-    <Compile Include="AtxImage.cs" />
     <Compile Include="AtxImageBase.cs" />
-    <Compile Include="AtxMesh.cs" />
+    <Compile Include="AtxProcessor.cs" />
+    <Compile Include="CmdParser.cs" />
     <Compile Include="ExportAtx.cs" />
     <Compile Include="File.cs" />
     <Compile Include="FileMem.cs" />
     <Compile Include="ImageOp.cs" />
+    <Compile Include="ImportAtx.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="LayoutInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextEncoding.cs" />
     <Compile Include="Vector2Int.cs" />
-    <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

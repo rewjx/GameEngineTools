@@ -189,7 +189,7 @@ namespace CstxPack
 
 
         /// <summary>
-        /// 字符串首尾的tab键空格键会影响程序允许，为避免编辑的麻烦，导出或导入时获取原始的空白字符
+        /// 字符串首尾的tab键空格键会影响程序运行，为避免编辑的麻烦，导出或导入时获取原始的空白字符
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>

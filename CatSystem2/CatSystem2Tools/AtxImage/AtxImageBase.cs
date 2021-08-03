@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using ProtoBuf;
-using Newtonsoft.Json;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
 
@@ -20,17 +19,33 @@ namespace AtxImage
 
 		public List<Bitmap> textures = new List<Bitmap>();
 
-
+	    ~AtxImageBase()
+        {
+			if(textures != null)
+            {
+				for(int i=0; i<textures.Count; i++)
+                {
+					if(textures[i] != null)
+                    {
+						textures[i].Dispose();
+                    }
+                }
+            }
+        }
 		public bool Load(string filepath, string baseName= null)
         {
 			FileStream fs = new FileStream(filepath, FileMode.Open);
+			if(baseName == null)
+            {
+				baseName = Path.GetFileNameWithoutExtension(filepath);
+            }
 			byte[] data = null;
 			using(BinaryReader br = new BinaryReader(fs))
             {
 				data = br.ReadBytes((int)fs.Length);
             }
 			if(data != null)
-            {
+			{ 
 				return this.Load(data, baseName);
             }
 			return false;
@@ -62,18 +77,15 @@ namespace AtxImage
 			{
 				string text = string.Format("tex{0}.png", num);
 				array = this.ReadBytes(zf, text);
-				bool flag = array == null || !this.AddImage(text, array);
-				if (flag)
+				if (array == null || !this.AddImage(text, array))
 				{
 					break;
 				}
-				int textureCount = this.TextureCount;
-				this.TextureCount = textureCount + 1;
+				this.TextureCount += 1;
 				num++;
 			}
-			array = this.ReadBytes(zf, "atlas.pb");
-			bool flag2 = array != null;
-			if (flag2)
+			array = this.ReadBytes(zf, ATLASPBNAME);
+			if (array != null)
 			{
 				using (MemoryStream memoryStream = new MemoryStream(array))
 				{
@@ -83,8 +95,8 @@ namespace AtxImage
 			}
 			else
 			{
-				array = this.ReadBytes(zf, "atlas.json");
-				using (FileMem fileMem = new FileMem("atlas.json", array))
+				array = this.ReadBytes(zf, ATLASNAME);
+				using (FileMem fileMem = new FileMem(ATLASNAME, array))
 				{
 					string jsonString = fileMem.ReadString();
 					this.layoutInfo = Json.Deserialize<LayoutInfo>(jsonString);
@@ -110,76 +122,43 @@ namespace AtxImage
 		protected byte[] ReadBytes(ZipFile zf, string name)
 		{
 			ZipEntry entry = zf.GetEntry(name);
-			bool flag = entry == null;
-			byte[] result;
-			if (flag)
+			if (entry == null)
+				return null;
+			byte[] result = null;
+			int num = (int)entry.Size;
+			using (Stream inputStream = zf.GetInputStream(entry))
 			{
-				result = null;
-			}
-			else
-			{
-				int num = (int)entry.Size;
-				using (Stream inputStream = zf.GetInputStream(entry))
-				{
-					byte[] array = new byte[num];
-					inputStream.Read(array, 0, num);
-					result = array;
-				}
+				result = new byte[num];
+				inputStream.Read(result, 0, num);
 			}
 			return result;
 		}
 
 		public LayoutInfo.CanvasInfo GetCanvasInfo()
 		{
-			bool flag = this.layoutInfo == null;
-			LayoutInfo.CanvasInfo result;
-			if (flag)
-			{
-				result = null;
-			}
-			else
-			{
-				result = this.layoutInfo.Canvas;
-			}
-			return result;
+			if (this.layoutInfo == null)
+				return null;
+
+			return this.layoutInfo.Canvas;
 		}
 
 		public LayoutInfo.BlockInfo GetBlockInfo(string name)
 		{
-			bool flag = this.layoutInfo == null;
-			LayoutInfo.BlockInfo result;
-			if (flag)
-			{
-				result = null;
-			}
-			else
-			{
-				string key = name.ToLower();
-				bool flag2 = !this.layoutInfo.blockInfoMap.ContainsKey(key);
-				if (flag2)
-				{
-					result = null;
-				}
-				else
-				{
-					result = this.layoutInfo.blockInfoMap[key];
-				}
-			}
-			return result;
+			if (this.layoutInfo == null)
+				return null;
+			string key = name.ToLower();
+			if(this.layoutInfo.blockInfoMap.ContainsKey(key))
+            {
+				return this.layoutInfo.blockInfoMap[key];
+            }
+			return null;
 		}
 
 		public LayoutInfo.BlockInfo GetBlockInfo(string name, int id)
 		{
-			bool flag = this.layoutInfo == null;
-			LayoutInfo.BlockInfo result;
-			if (flag)
-			{
-				result = null;
-			}
-			else
-			{
-				result = this.layoutInfo.SearchBlock(name, id);
-			}
+			if (this.layoutInfo == null)
+				return null;
+			LayoutInfo.BlockInfo result = this.layoutInfo.SearchBlock(name, id);		
 			return result;
 		}
 
@@ -189,8 +168,7 @@ namespace AtxImage
 			{
 				foreach (LayoutInfo.AttributeInfo attributeInfo in blockInfo.Attribute)
 				{
-					bool flag = attributeInfo.id == id;
-					if (flag)
+					if (attributeInfo.id == id)
 					{
 						return attributeInfo;
 					}
@@ -199,18 +177,18 @@ namespace AtxImage
 			return null;
 		}
 
-		public List<LayoutInfo.AttributeInfo> GetAttributeInfoList()
-		{
-			foreach (LayoutInfo.BlockInfo blockInfo in this.layoutInfo.Block)
-			{
-				bool flag = blockInfo.Attribute != null;
-				if (flag)
-				{
-					return blockInfo.Attribute;
-				}
-			}
-			return null;
-		}
+		//public List<LayoutInfo.AttributeInfo> GetAttributeInfoList()
+		//{
+		//	foreach (LayoutInfo.BlockInfo blockInfo in this.layoutInfo.Block)
+		//	{
+		//		bool flag = blockInfo.Attribute != null;
+		//		if (flag)
+		//		{
+		//			return blockInfo.Attribute;
+		//		}
+		//	}
+		//	return null;
+		//}
 
 		protected const string ATLASNAME = "atlas.json";
 

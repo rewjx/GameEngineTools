@@ -3,43 +3,62 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+
 namespace AtxImage
 {
     class Program
     {
-        static void Main(string[] args)
+
+        public static void PrintHelpMessage()
         {
-            PrintJsonTest();
+            Console.WriteLine("export atx to png or import png to atx(not supported yet)\n");
+            Console.WriteLine("usage:");
+            Console.WriteLine("export: *.exe -out -src(atx path you want to export) -save(the path you want to save the exported files)");
+            Console.WriteLine("\noptional: -r(process src floder recursively)");
+
+            Console.WriteLine("\n\n");
+            Console.WriteLine("examples:");
+            Console.WriteLine("export: *.exe -out -r -src atxpath -save savepath");
         }
 
-        static void PrintJsonTest()
+        public static bool Process(CmdParser parser)
         {
-            string dirpath = @"";
-            string path = @"";
-            string savepath = @"";
-            //DirectoryInfo dir = new DirectoryInfo(path);
-            //foreach (FileInfo item in dir.GetFiles("*.atx"))
-            //{
-            //    AtxImageBase atx = new AtxImageBase();
-            //    FileStream fs = new FileStream(item.FullName, FileMode.Open);
-            //    byte[] data = null;
-            //    using (BinaryReader br = new BinaryReader(fs))
-            //    {
-            //        data = br.ReadBytes((int)fs.Length);
-            //    }
-            //    atx.Load(data);
-            //    Console.WriteLine(item.FullName + " block num: " + atx.layoutInfo.Block.Count.ToString());
-            //}
-            AtxImageBase atx = new AtxImageBase();
-            atx.Load(path);
-            ExportAtx ex = new ExportAtx(atx, savepath);
-            ex.SaveSplitImages();
-            Console.WriteLine("block num: " + atx.layoutInfo.Block.Count.ToString());
-            foreach (LayoutInfo.BlockInfo k in atx.layoutInfo.Block)
+            bool isImport = parser.Has("-in");
+            bool isExport = parser.Has("-out");
+            if((isImport && isExport) || (!isImport && !isExport))
             {
-                Console.WriteLine("=======================================");
-                Console.WriteLine(k.ToString());
+                return false;
+            }
+            string srcpath = null;
+            string savepath = null;
+            if (!parser.Has("-src"))
+                return false;
+            if (!parser.Has("-save"))
+                return false;
+            srcpath = parser["-src"].First;
+            savepath = parser["-save"].First;
+            bool isRecursive = parser.Has("-r");
+            if(!Directory.Exists(savepath))
+            {
+                Directory.CreateDirectory(savepath);
+            }
+            if(isExport)
+            {
+                AtxProcessor.ExportAtxDir(srcpath, savepath, isRecursive);
+            }
+            return true;
+        }
+        static void Main(string[] args)
+        {
+            CmdParser parse = CmdParser.Parse(args);
+            if(!Process(parse))
+            {
+                PrintHelpMessage();
+                Console.ReadKey();
             }
         }
+
+
+
     }
 }

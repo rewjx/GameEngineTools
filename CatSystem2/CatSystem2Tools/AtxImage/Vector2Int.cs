@@ -50,7 +50,7 @@ namespace AtxImage
                     case 1:
                         return y;
                     default:
-                        throw new IndexOutOfRangeException("Invalid vector3d index!");
+                        throw new IndexOutOfRangeException("Invalid index!");
                 }
             }
             set
@@ -68,7 +68,7 @@ namespace AtxImage
                             break;
                         }
                     default:
-                        throw new IndexOutOfRangeException("Invalid vector3d index!");
+                        throw new IndexOutOfRangeException("Invalid index!");
                 }
             }
         }

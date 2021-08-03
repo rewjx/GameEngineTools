@@ -11,53 +11,147 @@ namespace AtxImage
 {
     class ExportAtx
     {
-        private Dictionary<UInt64, HashSet<int>> groups = null;
-
         private AtxImageBase atxImage = null;
 
         private string savepath;
 
-        private List<LayoutInfo.MeshInfo> allmeshs = null;
-
         public ExportAtx(AtxImageBase atxImage, string savepath)
         {
             this.atxImage = atxImage;
-            this.savepath = savepath;
+            this.savepath = Path.Combine(savepath, atxImage.FileName);
+            if(Directory.Exists(this.savepath) == false)
+            {
+                Directory.CreateDirectory(this.savepath);
+            }
+
         }
 
 
-
-        public void GetAllGroups()
+        /// <summary>
+        /// 将atx导出为原始未分割的图像，若含有差分信息，同时保存差分图像的坐标信息
+        /// </summary>
+        public void Export()
         {
             if (this.atxImage == null)
                 return;
-            this.groups = new Dictionary<ulong, HashSet<int>>();
-            this.allmeshs = new List<LayoutInfo.MeshInfo>();
-            for (int i = 0; i < atxImage.layoutInfo.Block.Count; i++)
+            string baseName = null;
+            Dictionary<string, string> names = new Dictionary<string, string>();
+            Dictionary<string, List<int>> offsetInfo = new Dictionary<string, List<int>>();
+            HashSet<string> occured = new HashSet<string>();
+            for (int i = 0; i < this.atxImage.layoutInfo.Block.Count; i++)
             {
-                foreach (LayoutInfo.MeshInfo item in atxImage.layoutInfo.Block[i].Mesh)
+                LayoutInfo.BlockInfo blockInfo = this.atxImage.layoutInfo.Block[i];
+                string picName = blockInfo.filenameOld;
+                if(string.IsNullOrWhiteSpace(picName))
                 {
-                    allmeshs.Add(item);
-                    ulong k = GetKey((int)Math.Round(item.srcOffsetX), (int)Math.Round(item.srcOffsetY),
-                       (int)Math.Round(item.width), (int)Math.Round(item.height));
-                    if(groups.ContainsKey(k))
+                    if(baseName == null)
                     {
-                        groups[k].Add(allmeshs.Count - 1);
+                        baseName = FindBaseName();
                     }
-                    else
-                    {
-                        HashSet<int> one = new HashSet<int>();
-                        one.Add(allmeshs.Count - 1);
-                        groups.Add(k, one);
-                    }
+                    picName = newNameToOldName(baseName, blockInfo.filename);
+                }
+                if(occured.Contains(picName))
+                {
+                    picName += "@" + blockInfo.id.ToString();
+                }
+                occured.Add(picName);
+                Bitmap pic = MergeOneBlock(blockInfo);
+                string k = blockInfo.filename + "@" + blockInfo.id.ToString();
+                names[k] = picName;
+                offsetInfo[picName] = new List<int>() { (int)blockInfo.offsetX, 
+                    (int)blockInfo.offsetY };
+                string pngSavePath = Path.Combine(this.savepath, picName + ".png");
+                pic.Save(pngSavePath, ImageFormat.Png);
+                pic.Dispose();
+            }
+            // save file name information for importing
+            string jsonStr = Json.Serialize(names);
+            string jsonPath = Path.Combine(this.savepath, "info.json");
+            using(FileStream fs = new FileStream(jsonPath, FileMode.Create))
+            {
+                using(StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(jsonStr);
                 }
             }
-            Console.WriteLine("groups: " + groups.Count.ToString());
-            foreach (var item in groups.Keys)
+
+            //save image offset information
+            jsonStr = Json.Serialize(offsetInfo);
+            jsonPath = Path.Combine(this.savepath, "offset.json");
+            using (FileStream fs = new FileStream(jsonPath, FileMode.Create))
             {
-                Console.WriteLine(item.ToString() + " : " + groups[item].Count.ToString());
+                using (StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    sw.Write(jsonStr);
+                }
             }
-          
+        }
+
+        public string FindBaseName()
+        {
+            if (this.atxImage == null)
+                return null;
+            string name = null;
+            foreach (LayoutInfo.BlockInfo blockinfo in this.atxImage.layoutInfo.Block)
+            {
+                string curName = blockinfo.filename;
+                if (string.IsNullOrEmpty(curName))
+                    continue;
+                string[] ss = curName.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+                if (ss.Length == 1)
+                {
+                    name = ss[0];
+                    break;
+                }
+            }
+            if (name == null)
+                name = this.atxImage.FileName;
+            return name;
+        }
+        public string newNameToOldName(string baseName, string newName)
+        {
+            string[] ss = newName.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
+            if(ss.Length == 1 || !int.TryParse(ss[0], out int v))
+            {
+                return baseName + "_1";
+            }
+            int len = 0;
+            string name = null;
+            if(int.TryParse(ss[0], out len))
+            {
+                name += baseName + "_";
+                for(int i=0; i<len; i++)
+                {
+                    name += "0";
+                }
+                name += ss[1];
+            }
+            if (string.IsNullOrEmpty(name))
+                name = newName;
+            return name;
+        }
+
+        /// <summary>
+        /// 把一个block合并为一张图片
+        /// </summary>
+        /// <param name="blockInfo"></param>
+        /// <returns></returns>
+        public Bitmap MergeOneBlock(LayoutInfo.BlockInfo blockInfo)
+        {
+            int width = (int)Math.Round(blockInfo.width);
+            int height = (int)Math.Round(blockInfo.height);
+            Bitmap img = new Bitmap(width, height);
+            foreach (LayoutInfo.MeshInfo meshinfo in blockInfo.Mesh)
+            {
+                Bitmap curtex= atxImage.textures[meshinfo.texNo];
+                Bitmap subImg = ImageOp.GetSubBitmap(curtex,
+                    new Rectangle((int)meshinfo.viewX, (int)meshinfo.viewY,
+                    (int)meshinfo.width, (int)meshinfo.height));
+                ImageOp.WriteBitmapAtTargetPosition(img, subImg,
+                    (int)meshinfo.srcOffsetX, (int)meshinfo.srcOffsetY);
+                subImg.Dispose();
+            }
+            return img;
         }
 
         public void SaveSplitImages()
@@ -73,7 +167,7 @@ namespace AtxImage
                 {
                     LayoutInfo.MeshInfo mesh = atxImage.layoutInfo.Block[i].Mesh[m];
                     Bitmap curimg = atxImage.textures[mesh.texNo];
-                    string saveName = Path.Combine(curpath,filename + "_" +  m.ToString() + ".png");
+                    string saveName = Path.Combine(curpath,filename + "#" +  m.ToString() + ".png");
                     Bitmap saveimg = ImageOp.GetSubBitmap(curimg,
                         new Rectangle((int)mesh.viewX, (int)mesh.viewY, (int)mesh.width, (int)mesh.height));
                     saveimg.Save(saveName, ImageFormat.Png);
@@ -81,77 +175,6 @@ namespace AtxImage
                 }
             }
         }
-
-        public string[] GetDiffString_wjx(string name)
-        {
-            Path.GetDirectoryName(name);
-            Path.GetExtension(name);
-            string[] array = Path.GetFileName(name).ToLower().Split(new char[]
-            {
-                ','
-            });
-            string[] result;
-            if (array.Length == 0)
-            {
-                result = null;
-            }
-            else if (array.Length == 1)
-            {
-                result = array;
-            }
-            else
-            {
-                int num = 0;
-                for (int i = 1; i < array.Length; i++)
-                {
-                    if (array[i] != "0")
-                    {
-                        num++;
-                    }
-                }
-                if (num == 0)
-                {
-                    result = null;
-                }
-                else
-                {
-                    List<string> list = new List<string>();
-                    int length = array[0].Length;
-                    int j = 1;
-                    int num2 = 0;
-                    while (j < array.Length)
-                    {
-                        if (array[j] != "0")
-                        {
-                            if (j == 1)
-                            {
-                                string item = array[0] + array[1];
-                                list.Add(item);
-                            }
-                            else if (array[j].Length > 0)
-                            {
-                                list.Add(string.Format("{0}_{1}", j - 1, array[j]));
-                            }
-                            num2++;
-                        }
-                        j++;
-                    }
-                    result = list.ToArray();
-                }
-            }
-            return result;
-        }
-
-        private UInt64 GetKey(int srcOffx, int srcOffy, int width, int height)
-        {
-            UInt64 key = (UInt32)srcOffx;
-            key = (key << 32) + (UInt32)srcOffy;
-            //key = (key << 16) + (UInt16)width;
-            //key = (key << 16) + (UInt16)height;
-            return key;
-        }
-
-        
-        
+  
     }
 }

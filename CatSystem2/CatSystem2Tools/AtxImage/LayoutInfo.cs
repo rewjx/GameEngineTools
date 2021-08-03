@@ -202,10 +202,10 @@ namespace AtxImage
             public override string ToString()
             {
                 string s1 =  string.Format("filename:{0}\t\n" +
-                    "anchorX:{1}\t anchorY:{2}\t" +
+                    "filenameOld:{1}\t anchorY:{2}\t" +
                     "offsetX:{3}\t offsetY:{4}\t " +
                     "width:{5}\t height:{6}\t" +
-                    "priority:{7}\t id:{8}", filename, anchorX.ToString(), anchorY.ToString(),
+                    "priority:{7}\t id:{8}" , filename ,filenameOld, anchorY.ToString(),
                     offsetX.ToString(), offsetY.ToString(), width.ToString(), height.ToString(),
                     priority.ToString(), id.ToString() +"\n------------------------------\n");
                 string s = "";
