@@ -34,7 +34,7 @@ namespace AtxImage
         /// <param name="fore"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public static bool WriteBitmapAtTargetPosition(Bitmap back, Bitmap fore, int x, int y)
+        public static bool WriteBitmapAtTargetPosition(ref Bitmap back, Bitmap fore, int x, int y)
         {
             if(x + fore.Width > back.Width || y + fore.Height > back.Height)
             {

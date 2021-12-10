@@ -1,0 +1,17 @@
+bin
+obj
+tags
+*.exe
+*.dll
+*.pdb
+*.suo
+*.pfx
+*.psess
+*.vsp
+*;*
+*~
+Test
+Makefile
+packages
+.nuget
+.vs

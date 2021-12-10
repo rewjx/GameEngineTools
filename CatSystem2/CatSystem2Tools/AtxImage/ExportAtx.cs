@@ -147,7 +147,7 @@ namespace AtxImage
                 Bitmap subImg = ImageOp.GetSubBitmap(curtex,
                     new Rectangle((int)meshinfo.viewX, (int)meshinfo.viewY,
                     (int)meshinfo.width, (int)meshinfo.height));
-                ImageOp.WriteBitmapAtTargetPosition(img, subImg,
+                ImageOp.WriteBitmapAtTargetPosition(ref img, subImg,
                     (int)meshinfo.srcOffsetX, (int)meshinfo.srcOffsetY);
                 subImg.Dispose();
             }
