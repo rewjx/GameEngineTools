@@ -10,6 +10,11 @@ tags
 *.vsp
 *;*
 *~
+*.iobj
+*.ipdb
+*.tlog
+*.log
+*.obj
 Test
 Makefile
 packages
