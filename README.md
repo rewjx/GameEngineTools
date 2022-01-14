@@ -14,6 +14,6 @@ Some tools for unpacking, packing or converting game resources.
 - [x] unpack .sx files
 
 ## AQUAStyle
--[x] unpack AQUA/ASFA files, just test on Touhou Genso Wanderer -Lotus Labyrinth R-.
+- [x] unpack AQUA/ASFA files, just test on Touhou Genso Wanderer -Lotus Labyrinth R-.
 
 
