@@ -38,5 +38,21 @@ namespace AquaArc
                 }
             }
         }
+
+        public static byte[] zstdCompress(byte[] buffer)
+        {
+            using (MemoryStream ms = new MemoryStream(buffer))
+            {
+                using (MemoryStream outms = new MemoryStream())
+                {
+                    using (ZstdNet.CompressionStream cs = new CompressionStream(outms))
+                    {
+                        cs.Write(buffer, 0, buffer.Length);
+                    }
+                    outms.Seek(0, SeekOrigin.Begin);
+                    return outms.ToArray();
+                }
+            }
+        }
     }
 }

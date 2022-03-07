@@ -27,5 +27,25 @@ namespace AquaArc
                 buffer[i] = decdata;
             }
         }
+
+        /// <summary>
+        /// Decrypt的逆运算，用于封包
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <param name="ror"></param>
+        public static void Encrypt(byte[] buffer, byte ror)
+        {
+            ror = (byte)(ror & 7);
+            //以byte位单位的循环右移x位的逆运算位循环右移8-x位
+            ror = (byte)(8 - ror);
+            for(int i=0; i<buffer.Length; i++)
+            {
+                byte v3 = ROR(buffer[i], ror);
+                byte v2 = (byte)(v3 ^ (byte)(v3 << 4));
+                byte v1 = (byte)(v2 >> 4);
+                byte encdata = (byte)(v2 ^ v1);
+                buffer[i] = encdata;
+            }
+        }
     }
 }

@@ -35,6 +35,17 @@ namespace AquaArc
             unk3 = br.ReadUInt32();
         }
 
+        public void WriteAquaHeader(BinaryWriter bw)
+        {
+            bw.Write(signature);
+            bw.Write(unk1);
+            bw.Write(encFlag);
+            bw.Write(fileCount);
+            bw.Write(unk2);
+            bw.Write(totalInfoSize);
+            bw.Write(unk3);
+        }
+
 
     }
 
@@ -51,7 +62,7 @@ namespace AquaArc
 
         public uint flag;
 
-        public uint unk1;
+        public uint unk1; //namelength?
 
         public uint nameOffset;
 
@@ -69,6 +80,17 @@ namespace AquaArc
             unk1 = br.ReadUInt32();
             nameOffset = br.ReadUInt32();
             dataOffset = br.ReadInt64();
+        }
+
+        public void WriteAquaFileInfoItem(BinaryWriter bw)
+        {
+            bw.Write(packSize);
+            bw.Write(unpackSize);
+            bw.Write(nameHash);
+            bw.Write(flag);
+            bw.Write(unk1);
+            bw.Write(nameOffset);
+            bw.Write(dataOffset);
         }
     }
 
