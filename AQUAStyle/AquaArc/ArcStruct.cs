@@ -16,23 +16,26 @@ namespace AquaArc
 
         public UInt16 encFlag;
 
-        public uint fileCount;
+        public ushort fileCount;
 
-        public uint unk2;
+        public ushort unk2;
+
+        public uint unk3;
 
         public uint totalInfoSize;
 
-        public uint unk3;
+        public uint unk4;
 
         public void ReadAquaHeader(BinaryReader br)
         {
             signature = br.ReadUInt32();
             unk1 = br.ReadUInt16();
             encFlag = br.ReadUInt16();
-            fileCount = br.ReadUInt32();
-            unk2 = br.ReadUInt32();
-            totalInfoSize = br.ReadUInt32();
+            fileCount = br.ReadUInt16();
+            unk2 = br.ReadUInt16();
             unk3 = br.ReadUInt32();
+            totalInfoSize = br.ReadUInt32();
+            unk4 = br.ReadUInt32();
         }
 
         public void WriteAquaHeader(BinaryWriter bw)
@@ -42,8 +45,9 @@ namespace AquaArc
             bw.Write(encFlag);
             bw.Write(fileCount);
             bw.Write(unk2);
-            bw.Write(totalInfoSize);
             bw.Write(unk3);
+            bw.Write(totalInfoSize);
+            bw.Write(unk4);
         }
 
 
@@ -115,9 +119,11 @@ namespace AquaArc
 
         public uint unk1;
 
-        public uint fileCount;
+        public ushort fileCount;
 
-        public uint unk2;
+        public ushort unk2;
+
+        public uint unk3;
 
         public uint totalInfoSize;
 
@@ -127,8 +133,9 @@ namespace AquaArc
         {
             signature = br.ReadUInt32();
             unk1 = br.ReadUInt32();
-            fileCount = br.ReadUInt32();
-            unk2 = br.ReadUInt32();
+            fileCount = br.ReadUInt16();
+            unk2 = br.ReadUInt16();
+            unk3 = br.ReadUInt32();
             totalInfoSize = br.ReadUInt32();
             otherBytes = br.ReadBytes(20);
         }
