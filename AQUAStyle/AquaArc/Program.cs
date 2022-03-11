@@ -11,7 +11,6 @@ namespace AquaArc
 {
     class Program
     {
-
         static void PrintHelpMessage()
         {
             Console.WriteLine("unpack(解包): \n" +
@@ -23,7 +22,7 @@ namespace AquaArc
         }
         static void Main(string[] args)
         {
-            if(args.Length < 1)
+            if (args.Length < 1)
             {
                 PrintHelpMessage();
                 Console.ReadKey();
