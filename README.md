@@ -16,3 +16,4 @@ Some tools for unpacking, packing or converting game resources.
 ## AQUAStyle
 - [x] unpack AQUA/ASFA files, just test on Touhou Genso Wanderer -Lotus Labyrinth R-.
 - [x] 支持AQUA文件头的打包替换。即只打包原封包内有的文件(即文件名相同的文件，文件内容可变。不能减少或增加文件)
+- [x] 支持text.bin文本的导出和导入
