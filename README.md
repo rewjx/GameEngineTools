@@ -10,7 +10,8 @@ Some tools for unpacking, packing or converting game resources.
 - [x] export texts from cstx script or import texts into cstx script. 从cstx脚本导入导出文本。
 - [x] Atx Image export, import(not finished)
 
-note:
+Note:
+
 when importing texts, command -no is not recommended. 一般不推荐用-no
 
 ## Calcite
